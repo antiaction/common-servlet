@@ -68,6 +68,7 @@ public class LogFilter implements Filter {
 				conn = ds.getConnection();
 				if ( conn != null ) {
 					conn.setCatalog( "alfachins" );
+					conn.setAutoCommit( false );
 
 					insertSql = "";
 					insertSql += "INSERT INTO accesslog";
