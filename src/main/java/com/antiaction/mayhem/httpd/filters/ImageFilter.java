@@ -1,11 +1,18 @@
 /*
- * Created on 16-03-2005
+ * Image Filter (Automatic scaling).
+ * Copyright (C) 2005  Nicholas Clarke
  *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package com.antiaction.mayhem.httpd.filters;
 
+/*
+ * History:
+ *
+ * 16-Mar-2005 : First implementation.
+ * 19-Mar-2005 : Javadoc.
+ *
+ */
+
+package com.antiaction.mayhem.httpd.filters;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -38,13 +45,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Nicholas
+ * Image Filter (Automatic scaling).
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * @version 1.00
+ * @author Nicholas Clarke <mayhem[at]antiaction[dot]com>
  */
 public class ImageFilter implements Filter {
 
+	/** FilterConfig used to obtaint ServletContext. */
 	private FilterConfig filterConfig;
 
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -120,8 +128,18 @@ public class ImageFilter implements Filter {
 		chain.doFilter( request, response );
 	}
 
-	public synchronized void scaleImage(String infile, int destWidth, int destHeight, String outfile, int quality) {
-		// load image from INFILE
+	/**
+	 * Scales a source image to a destination image.
+	 * @param infile source image filename.
+	 * @param destWidth destination width.
+	 * @param destHeight destination height.
+	 * @param outfile destination image filename.
+	 * @param quality encoding quality (0-100).
+	 */
+	private synchronized void scaleImage(String infile, int destWidth, int destHeight, String outfile, int quality) {
+		/*
+		 * Load source image.
+		 */
 		Image image = Toolkit.getDefaultToolkit().getImage( infile );
 		MediaTracker mediaTracker = new MediaTracker( new Container() );
 		mediaTracker.addImage( image, 0 );
@@ -131,7 +149,9 @@ public class ImageFilter implements Filter {
 		catch (InterruptedException e) {
 		}
 
-		// determine thumbnail size from WIDTH and HEIGHT
+		/*
+		 * determine destination size.
+		 */
 		double thumbRatio = (double)destWidth / (double)destHeight;
 		int imageWidth = image.getWidth( null );
 		int imageHeight = image.getHeight( null );
@@ -142,8 +162,10 @@ public class ImageFilter implements Filter {
 			destWidth = (int)( destHeight * imageRatio );
 		}
 
-		// draw original image to thumbnail image object and
-		// scale it to the new size on-the-fly
+		/*
+		 * Draw original image to destination image object and
+		 * scale it to the new size on-the-fly.
+		 */
 		BufferedImage destImage = new BufferedImage( destWidth, destHeight, BufferedImage.TYPE_INT_RGB );
 		Graphics2D graphics2D = destImage.createGraphics();
 		//graphics2D.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
@@ -151,7 +173,9 @@ public class ImageFilter implements Filter {
 		graphics2D.setRenderingHint( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
 		graphics2D.drawImage( image, 0, 0, destWidth, destHeight, null );
 
-		// save thumbnail image to OUTFILE
+		/*
+		 * Save destination image.
+		 */
 		try {
 			BufferedOutputStream out = new BufferedOutputStream( new FileOutputStream( outfile ) );
 			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder( out );
@@ -169,12 +193,13 @@ public class ImageFilter implements Filter {
 			System.out.println( e );
 		}
 
+		/*
+		 * Cleanup.
+		 */
 		graphics2D.dispose();
 		graphics2D = null;
-
 		image.flush();
 		image = null;
-
 		destImage.flush();
 		destImage = null;
 	}
