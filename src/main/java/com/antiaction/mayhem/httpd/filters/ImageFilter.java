@@ -62,17 +62,27 @@ public class ImageFilter implements Filter {
 		String pxStr = request.getParameter( "px" );
 		if ( pxStr != null && pxStr.length() != 0 ) {
 			int px = 0;
+			int idx;
 			try {
 				px = Integer.parseInt( pxStr );
 
 				String path = req.getPathInfo();
 				String realPath = servletContext.getRealPath( path );
 
+				int slashIdx = path.lastIndexOf( "/" );
+				String fileStr = null;
+				String extStr = null;
+				if ( slashIdx != -1 ) {
+					fileStr = path.substring( slashIdx + 1, path.length() );
+				}
+				if ( fileStr != null ) {
+					extStr = servletContext.getMimeType( fileStr );
+				}
+
 				// debug
 				//System.out.println( path );
 				//System.out.println( realPath );
 
-				int idx = path.lastIndexOf( "/" );
 				//String outfile = path.substring( idx + 1, path.length() );
 				//System.out.println( outfile + ".1" );
 
@@ -80,11 +90,15 @@ public class ImageFilter implements Filter {
 
 				File outFile = new File( outfile );
 				if ( !outFile.exists() ) {
-					scaleImage( realPath, 192, 192, outfile, 100 );
+					scaleImage( realPath, px, px, outfile, 75 );
 				}
 
 				byte[] bytes = null;
 				bytes = new byte[ 65536 ];
+
+				if ( extStr != null ) {
+					resp.setContentType( extStr );
+				}
 
 				ServletOutputStream out = resp.getOutputStream();
 				InputStream is = new BufferedInputStream( new FileInputStream( outfile ) );
