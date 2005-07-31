@@ -20,7 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class LogFilter implements Filter, Runnable {
 	/** Shutdown boolean. */
 	private boolean exit = false;
 
-	private FilterConfig config;
+	//private FilterConfig config;
 	private String dsName;
 	private Context ctx;
 	private DataSource ds;
@@ -61,7 +61,7 @@ public class LogFilter implements Filter, Runnable {
 	private List entries = new ArrayList();
 
 	public void init(FilterConfig filterConfig) throws ServletException {
-		config = filterConfig;
+		//config = filterConfig;
 		dsName = filterConfig.getInitParameter( "datasource" );
 		if ( dsName != null && !dsName.equals( "" ) ) {
 			try {
@@ -81,7 +81,7 @@ public class LogFilter implements Filter, Runnable {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest)request;
-		HttpServletResponse resp = (HttpServletResponse)response;
+		//HttpServletResponse resp = (HttpServletResponse)response;
 
 		HttpSession httpSession = req.getSession( true );
 
@@ -144,7 +144,6 @@ public class LogFilter implements Filter, Runnable {
 				if ( tmpEntries != null && tmpEntries.size() > 0 ) {
 					Connection conn = null;
 					String insertSql;
-					Statement stm = null;
 					ResultSet rs = null;
 					PreparedStatement insertStm;
 

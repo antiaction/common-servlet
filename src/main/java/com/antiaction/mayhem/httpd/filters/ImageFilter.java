@@ -71,7 +71,6 @@ public class ImageFilter implements Filter {
 		String pxStr = request.getParameter( "px" );
 		if ( pxStr != null && pxStr.length() != 0 ) {
 			int px = 0;
-			int idx;
 			try {
 				px = Integer.parseInt( pxStr );
 
