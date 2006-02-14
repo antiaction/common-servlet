@@ -74,7 +74,11 @@ public class ImageFilter implements Filter {
 			try {
 				px = Integer.parseInt( pxStr );
 
-				String path = req.getPathInfo();
+				String contextPath = req.getContextPath();
+				String servletPath = req.getServletPath();
+				String pathInfo = req.getPathInfo();
+
+				String path = contextPath + servletPath + pathInfo;
 				String realPath = servletContext.getRealPath( path );
 
 				int slashIdx = path.lastIndexOf( "/" );
@@ -152,15 +156,20 @@ public class ImageFilter implements Filter {
 		/*
 		 * determine destination size.
 		 */
-		double thumbRatio = (double)destWidth / (double)destHeight;
 		int imageWidth = image.getWidth( null );
 		int imageHeight = image.getHeight( null );
-		double imageRatio = (double)imageWidth / (double)imageHeight;
-		if ( thumbRatio < imageRatio ) {
-			destHeight = (int)( destWidth / imageRatio );
-		} else {
-			destWidth = (int)( destHeight * imageRatio );
+		double widthRatio = (double)destWidth / (double)imageWidth;
+		double heightRatio = (double)destHeight / (double)imageHeight;
+
+		long tmpW, tmpH;
+		tmpW = Math.round((double)imageWidth * widthRatio);
+		tmpH = Math.round((double)imageHeight * widthRatio);
+		if ( tmpW > destWidth || tmpH > destHeight ) {
+			tmpW = Math.round((double)imageWidth * heightRatio);
+			tmpH = Math.round((double)imageHeight * heightRatio);
 		}
+		destWidth = (int)tmpW;
+		destHeight = (int)tmpH;
 
 		/*
 		 * Draw original image to destination image object and

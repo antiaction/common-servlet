@@ -38,10 +38,16 @@ public class PostBanFilter implements Filter {
 		HttpServletResponse resp = (HttpServletResponse)response;
 		ServletContext servletContext = filterConfig.getServletContext();
 
+		boolean banned = false;
+
 		String ipStr = req.getRemoteAddr();
 		ipBytes( ipStr );
 
-		chain.doFilter( request, response );
+		if ( !banned ) {
+			chain.doFilter( request, response );
+		}
+		else {
+		}
 	}
 
 	public byte[] ipBytes(String ipStr) {
