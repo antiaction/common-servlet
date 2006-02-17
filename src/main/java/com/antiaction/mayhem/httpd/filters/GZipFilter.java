@@ -1,18 +1,25 @@
 /*
- * Created on 2005-10-04
+ * Experimental response gzip filter.
+ * Copyright (C) 2004  Nicholas Clarke
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
+
+/*
+ * History:
+ *
+ * 04-Oct-2004 : Initial implementation.
+ *
+ */
+
 package com.antiaction.mayhem.httpd.filters;
 
 import java.util.zip.GZIPOutputStream;
 
 /**
- * @author Nicholas
+ * Experimental response gzip filter.
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @version 1.00
+ * @author Nicholas Clarke <mayhem[at]antiaction[dot]com>
  */
 public class GZipFilter {
 

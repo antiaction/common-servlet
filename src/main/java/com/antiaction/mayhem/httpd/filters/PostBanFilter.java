@@ -1,9 +1,16 @@
 /*
- * Created on 2005-12-20
+ * Experimental POST ban filter.
+ * Copyright (C) 2005  Nicholas Clarke
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
+
+/*
+ * History:
+ *
+ * 20-Dec-2005 : Initial implementation.
+ *
+ */
+
 package com.antiaction.mayhem.httpd.filters;
 
 import com.antiaction.mayhem.core.Strings;
@@ -21,6 +28,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Experimental POST ban filter.
+ *
+ * @version 1.00
+ * @author Nicholas Clarke <mayhem[at]antiaction[dot]com>
+ */
 public class PostBanFilter implements Filter {
 
 	/** FilterConfig used to obtaint ServletContext. */
