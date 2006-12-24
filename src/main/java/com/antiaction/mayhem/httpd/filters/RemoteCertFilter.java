@@ -103,7 +103,13 @@ public class RemoteCertFilter implements Filter {
 			chain.doFilter( request, response );
 		}
 		else {
+			//HTTP/1.1 426 Upgrade Required
+			//Upgrade: TLS/1.0, HTTP/1.1
+			//Connection: Upgrade
 			resp.reset();
+			resp.setStatus( 426, "Upgrade Required" );
+			resp.setHeader( "Upgrade", "TLS/1.0, HTTP/1.1" );
+			resp.setHeader( "Connection", "Upgrade" );
 			PrintWriter out = resp.getWriter();
 			out.write( "User certificate authentication failed!" );
 			out.flush();
