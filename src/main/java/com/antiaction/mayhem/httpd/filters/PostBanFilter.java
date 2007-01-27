@@ -13,7 +13,7 @@
 
 package com.antiaction.mayhem.httpd.filters;
 
-import com.antiaction.mayhem.core.Strings;
+import com.antiaction.common.strings.Strings;
 
 import java.io.IOException;
 import java.util.List;
