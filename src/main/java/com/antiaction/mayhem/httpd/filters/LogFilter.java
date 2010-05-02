@@ -7,7 +7,7 @@
 /*
  * History:
  *
- * 04-Mar-2005 : Refactoring, made storing asynchronious.
+ * 04-Mar-2005 : Refactoring, made storing asynchronous.
  *
  */
 
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Asynchronious logging filter.
+ * Asynchronous logging filter.
  *
  * @version 1.00
  * @author Nicholas Clarke <mayhem[at]antiaction[dot]com>
