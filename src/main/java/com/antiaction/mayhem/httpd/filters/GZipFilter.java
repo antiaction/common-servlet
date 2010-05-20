@@ -52,7 +52,9 @@ public class GZipFilter implements Filter {
 		HttpServletResponse resp = (HttpServletResponse)response;
 		ServletContext servletContext = filterConfig.getServletContext();
 
-		chain.doFilter( request, response );
+
+
+		chain.doFilter( req, resp );
 	}
 
 	//	dres.setHeader( "Content-Encoding", "gzip" );
