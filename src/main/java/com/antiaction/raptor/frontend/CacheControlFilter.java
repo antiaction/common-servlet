@@ -102,7 +102,7 @@ public class CacheControlFilter implements Filter {
 		}
 
 		// debug
-		System.out.println( path + "=" + caching );
+		//System.out.println( path + "=" + caching );
 
 		if ( caching != 0 ) {
 			httpResponse = new FilteredResponse( httpRequest, httpResponse, path, caching );
@@ -233,7 +233,7 @@ public class CacheControlFilter implements Filter {
 				httpResponse.setHeader( "Pragma", "no-cache" );
 
 				// debug
-				System.out.println( "Cached: " + path );
+				//System.out.println( "Cached: " + path );
 
 				caching = 0;
 			}
@@ -250,7 +250,7 @@ public class CacheControlFilter implements Filter {
 				httpResponse.setHeader( "Pragma", "no-cache" );
 
 				// debug
-				System.out.println( "!Cached: " + path );
+				//System.out.println( "!Cached: " + path );
 
 				caching = 0;
 			}
