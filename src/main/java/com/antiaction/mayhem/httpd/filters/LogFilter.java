@@ -13,32 +13,28 @@
 
 package com.antiaction.mayhem.httpd.filters;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.sql.SQLException;
-
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
-//import javax.sql.ConnectionPoolDataSource;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Asynchronous logging filter.
@@ -53,7 +49,9 @@ public class LogFilter implements Filter, Runnable {
 
 	//private FilterConfig config;
 	private String dsName;
+
 	private Context ctx;
+
 	private DataSource ds;
 
 	private Object syncObj = new Object();
@@ -174,13 +172,16 @@ public class LogFilter implements Filter, Runnable {
 									insertStm.executeUpdate();
 
 									rs = insertStm.getGeneratedKeys();
-									if ( rs != null & rs.next() ) {
+									if ( rs.next() ) {
 										//System.out.println( rs.getLong( 1 ) );
 									}
 									insertStm.clearParameters();
 
+									rs.close();
 									conn.commit();
 								}
+
+								insertStm.close();
 								conn.close();
 							}
 						}
