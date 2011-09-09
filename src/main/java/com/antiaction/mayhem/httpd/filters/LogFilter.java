@@ -1,6 +1,6 @@
 /*
- * Asynchronious logging filter.
- * Copyright (C) 2004, 2005  Nicholas Clarke
+ * Asynchronous logging filter.
+ * Copyright (C) 2004, 2005, 2011  Nicholas Clarke
  *
  */
 
@@ -8,6 +8,10 @@
  * History:
  *
  * 04-Mar-2005 : Refactoring, made storing asynchronous.
+ * 10-Sep-2011 : Added missing rs.close() and rs.insertStm to plug memory mysql jdbc leak.
+ * 10-Sep-2011 : Added some autodoc.
+ * 10-Sep-2011 : Added thread exit to destroy() and some cleanup on thread exit.
+ * 10-Sep-2011 : Refactored thread to be more effective.
  *
  */
 
@@ -47,19 +51,22 @@ public class LogFilter implements Filter, Runnable {
 	/** Shutdown boolean. */
 	private boolean exit = false;
 
-	//private FilterConfig config;
+	/** DataSource name. */
 	private String dsName;
 
+	/** Container context. */
 	private Context ctx;
 
+	/** DataSource instance. */
 	private DataSource ds;
 
+	/** Synchronize object. */
 	private Object syncObj = new Object();
 
-	private List entries = new ArrayList();
+	/** <code>List</code> of new log entries. */
+	private List newEntries = new ArrayList();
 
 	public void init(FilterConfig filterConfig) throws ServletException {
-		//config = filterConfig;
 		dsName = filterConfig.getInitParameter( "datasource" );
 		if ( dsName != null && !dsName.equals( "" ) ) {
 			try {
@@ -75,6 +82,7 @@ public class LogFilter implements Filter, Runnable {
 	}
 
 	public void destroy() {
+		exit = true;
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -111,7 +119,7 @@ public class LogFilter implements Filter, Runnable {
 		entry.processTime = (int)(exitTime - enterTime);
 
 		synchronized ( syncObj ) {
-			entries.add( entry );
+			newEntries.add( entry );
 		}
 	}
 
@@ -126,24 +134,34 @@ public class LogFilter implements Filter, Runnable {
 		int processTime;
 	}
 
+	private static String insertSql;
+
+	static {
+		insertSql = "INSERT INTO accesslog";
+		insertSql += "(timestamp, clientIp, referer, method, resourcePath, sessionId, statusCode, processTime) ";
+		insertSql += "VALUES(?, ?, ?, ?, ?, ?, ?, ?) ";
+	}
+
 	public void run() {
+		Connection conn;
+		ResultSet rs;
+		PreparedStatement insertStm;
+
+		List workEntries = new ArrayList();
+
 		while ( !exit ) {
 			try {
 				Thread.sleep( 60 * 1000 );
 
-				List tmpEntries = null;
 				synchronized ( syncObj ) {
-					if ( entries != null && entries.size() > 0 ) {
-						tmpEntries = entries;
-						entries = new ArrayList();
-					}
+					workEntries.addAll( newEntries );
+					newEntries.clear();
 				}
 
-				if ( tmpEntries != null && tmpEntries.size() > 0 ) {
-					Connection conn = null;
-					String insertSql;
-					ResultSet rs = null;
-					PreparedStatement insertStm;
+				if ( workEntries.size() > 0 ) {
+					conn = null;
+					rs = null;
+					insertStm = null;
 
 					try {
 						if ( ds != null ) {
@@ -152,15 +170,12 @@ public class LogFilter implements Filter, Runnable {
 								conn.setCatalog( "alfachins" );
 								conn.setAutoCommit( false );
 
-								insertSql = "";
-								insertSql += "INSERT INTO accesslog";
-								insertSql += "(timestamp, clientIp, referer, method, resourcePath, sessionId, statusCode, processTime) " + "\n";
-								insertSql += "VALUES(?, ?, ?, ?, ?, ?, ?, ?)" + "\n";
 								insertStm = conn.prepareStatement( insertSql, Statement.RETURN_GENERATED_KEYS  );
 
-								for ( int i=0; i<tmpEntries.size(); ++i ) {
-									FilterEntry entry = (FilterEntry)tmpEntries.get( i );
+								while ( workEntries.size() > 0 ) {
+									FilterEntry entry = (FilterEntry)workEntries.remove( 0 );
 
+									insertStm.clearParameters();
 									insertStm.setTimestamp( 1, entry.timestamp );
 									insertStm.setString( 2, entry.clientIp );
 									insertStm.setString( 3, entry.referer );
@@ -175,25 +190,53 @@ public class LogFilter implements Filter, Runnable {
 									if ( rs.next() ) {
 										//System.out.println( rs.getLong( 1 ) );
 									}
-									insertStm.clearParameters();
-
 									rs.close();
+
 									conn.commit();
 								}
-
-								insertStm.close();
-								conn.close();
 							}
 						}
 					}
 					catch (SQLException e) {
 						System.out.println( e );
 					}
+					finally {
+						try {
+							if ( rs != null ) {
+								rs.close();
+							}
+						}
+						catch (SQLException e) {
+						}
+						rs = null;
+						try {
+							if ( insertStm != null ) {
+								insertStm.close();
+							}
+						}
+						catch (SQLException e) {
+						}
+						insertStm = null;
+						try {
+							if ( conn != null ) {
+								conn.close();
+							}
+						}
+						catch (SQLException e) {
+						}
+						conn = null;
+					}
 				}
 			}
 			catch (InterruptedException e) {
 			}
 		}
+
+		dsName = null;
+		ctx = null;
+		ds = null;
+		syncObj = null;
+		newEntries = null;
 	}
 
 }
