@@ -123,7 +123,7 @@ public class LogFilter implements Filter, Runnable {
 		}
 	}
 
-	class FilterEntry {
+	static class FilterEntry {
 		Timestamp timestamp;
 		String clientIp;
 		String referer;
