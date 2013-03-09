@@ -51,6 +51,9 @@ public class MultipartFormFilter implements Filter {
 		//HttpServletResponse resp = (HttpServletResponse)response;
 		//ServletContext servletContext = filterConfig.getServletContext();
 
+		if ( "PUT".equals(req.getMethod()) )  {
+		}
+
 		/*
 		 * Content-Type.
 		 * Content-Type: text/html; charset=iso-8859-1
