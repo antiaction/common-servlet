@@ -7,7 +7,6 @@
 
 package com.antiaction.mayhem.mailmanager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,61 +135,6 @@ public class PathMap<T> {
 			}
 		}
 		return action;
-	}
-
-	public static void printarray(List<Integer> numerics) {
-		if ( numerics != null ) {
-			for ( int i=0; i<numerics.size(); ++i ) {
-				if ( i > 0 ) {
-					System.out.print( ", " );
-				}
-				System.out.print( numerics.get( i ) );
-			}
-			System.out.println();
-		}
-	}
-
-	public static void main(String[] args) {
-		PathMap<Integer> pathMap = new PathMap<Integer>();
-
-		pathMap.add( "/", 0 );
-		pathMap.add( "/domain/list/", 1 );
-		pathMap.add( "/domain/add/", 2 );
-		pathMap.add( "/domain/<numeric>/edit/", 3 );
-		pathMap.add( "/domain/<numeric>/account/list/", 4 );
-		pathMap.add( "/domain/<numeric>/account/add/", 5 );
-		pathMap.add( "/domain/<numeric>/account/<numeric>/edit/", 6 );
-
-		Integer action;
-		List<Integer> numerics = new ArrayList<Integer>();
-
-		action = pathMap.get( "/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/list/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/add/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/42/edit/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/43/account/list/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/44/account/add/", numerics );
-		System.out.println( action );
-		printarray( numerics );
-
-		action = pathMap.get( "/domain/45/account/46/edit/", numerics );
-		System.out.println( action );
-		printarray( numerics );
 	}
 
 }
