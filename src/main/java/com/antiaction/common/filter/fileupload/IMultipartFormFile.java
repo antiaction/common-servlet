@@ -12,7 +12,7 @@
  *
  */
 
-package com.antiaction.filter.fileupload;
+package com.antiaction.common.filter.fileupload;
 
 import java.io.File;
 
