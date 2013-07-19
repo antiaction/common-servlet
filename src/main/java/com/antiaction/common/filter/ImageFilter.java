@@ -12,7 +12,7 @@
  *
  */
 
-package com.antiaction.mayhem.httpd.filters;
+package com.antiaction.common.filter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

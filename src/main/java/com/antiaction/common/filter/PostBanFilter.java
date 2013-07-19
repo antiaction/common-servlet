@@ -11,7 +11,7 @@
  *
  */
 
-package com.antiaction.mayhem.httpd.filters;
+package com.antiaction.common.filter;
 
 import com.antiaction.common.strings.Strings;
 

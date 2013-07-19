@@ -15,7 +15,7 @@
  *
  */
 
-package com.antiaction.mayhem.httpd.filters;
+package com.antiaction.common.filter;
 
 import java.io.IOException;
 import java.sql.Connection;
